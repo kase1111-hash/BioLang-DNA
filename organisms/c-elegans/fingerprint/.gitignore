@@ -1,0 +1,17 @@
+# Generated analysis outputs — regenerate with:
+#   python tools/frequency_analyzer.py all \
+#     --genome organisms/c-elegans/data/genome.fna \
+#     --gff organisms/c-elegans/data/annotations.gff3 \
+#     --cds organisms/c-elegans/data/cds.fna \
+#     --outdir organisms/c-elegans/fingerprint
+*.csv
+*.png
+*.bed
+*.txt
+density/
+kmer/
+repeats/
+
+# Keep gitignore and gitkeep
+!.gitignore
+!.gitkeep
