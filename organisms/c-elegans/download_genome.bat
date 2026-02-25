@@ -115,11 +115,7 @@ REM ============================================================
 :decompress_file
 if not exist "%~1" exit /b 0
 
-REM Try tar first (Windows 10 1803+)
-tar -xzf "%~1" 2>nul
-if exist "%~2" goto :decompress_ok
-
-REM Fallback: PowerShell gzip decompression
+REM Try PowerShell gzip decompression (most reliable for plain .gz files)
 powershell -NoProfile -Command ^
     "$fs = [IO.File]::OpenRead('%~1'); $gz = [IO.Compression.GzipStream]::new($fs, [IO.Compression.CompressionMode]::Decompress); $os = [IO.File]::Create('%~2'); $gz.CopyTo($os); $os.Close(); $gz.Close(); $fs.Close()" 2>nul
 

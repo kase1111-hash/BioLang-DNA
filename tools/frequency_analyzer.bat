@@ -3,7 +3,7 @@ REM frequency_analyzer.bat — Run the GeneLang frequency-analysis pipeline (Win
 REM
 REM Convenience wrapper that locates a working Python 3 interpreter and
 REM calls frequency_analyzer.py.  When invoked with no arguments it runs
-REM the full "all" analysis against the default C. elegans test data.
+REM the full "all" analysis against the default C. elegans data.
 REM
 REM Requires: Python 3 + packages listed in requirements.txt
 REM
@@ -118,11 +118,34 @@ if not exist "%DATA_DIR%\cds.fna"          set "MISSING=1"
 if defined MISSING (
     echo ERROR: One or more input files not found in %DATA_DIR%
     echo.
-    echo Run generate_test_data.bat first to create the test data, or
-    echo pass explicit paths:
+    echo Run the download script first to get the real C. elegans genome:
+    echo.
+    echo   organisms\c-elegans\download_genome.bat
+    echo.
+    echo Or pass explicit paths:
     echo.
     echo   frequency_analyzer.bat all --genome PATH --gff PATH --cds PATH --outdir PATH
     exit /b 1
+)
+
+REM --- Check if data is the synthetic test set (too small for real analysis) ---
+REM Real C. elegans CDS is ~25-30MB with ~20,000 sequences; test data is <1MB.
+for %%F in ("%DATA_DIR%\cds.fna") do set "CDS_SIZE=%%~zF"
+if !CDS_SIZE! lss 1000000 (
+    echo WARNING: CDS file is only !CDS_SIZE! bytes — this looks like synthetic test data.
+    echo          Real C. elegans CDS should be ~25-30 MB with ~20,000 sequences.
+    echo          Frequency analysis requires large sample sizes to reveal meaningful patterns.
+    echo.
+    echo To download the real genome from NCBI, run:
+    echo.
+    echo   organisms\c-elegans\download_genome.bat
+    echo.
+    set /p "CONTINUE=Continue anyway with test data? [y/N] "
+    if /i not "!CONTINUE!"=="y" (
+        echo Aborted. Download real data first, then re-run.
+        exit /b 0
+    )
+    echo.
 )
 
 !PYTHON! "%SCRIPT_DIR%frequency_analyzer.py" all --genome "%DATA_DIR%\genome.fna" --gff "%DATA_DIR%\annotations.gff3" --cds "%DATA_DIR%\cds.fna" --outdir "%OUT_DIR%"
