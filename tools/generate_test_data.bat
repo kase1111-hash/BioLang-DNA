@@ -97,9 +97,6 @@ echo.
 echo === Test data generation complete ===
 echo.
 echo To run the fingerprinting pipeline against this data:
-echo   !PYTHON! tools\frequency_analyzer.py all ^
-echo     --genome "%OUTDIR%\genome.fna" ^
-echo     --gff "%OUTDIR%\annotations.gff3" ^
-echo     --cds "%OUTDIR%\cds.fna" ^
-echo     --outdir organisms\c-elegans\fingerprint
+echo.
+echo   !PYTHON! tools\frequency_analyzer.py all --genome "%OUTDIR%\genome.fna" --gff "%OUTDIR%\annotations.gff3" --cds "%OUTDIR%\cds.fna" --outdir organisms\c-elegans\fingerprint
 exit /b 0
