@@ -44,16 +44,26 @@ echo === GeneLang Test Data Generator ===
 echo Output directory: %OUTDIR%
 echo.
 
-REM Check Python is available
-where python >nul 2>&1
-if !errorlevel! neq 0 (
-    echo ERROR: Python not found in PATH.
-    echo Please install Python 3 and ensure it is on your PATH.
+REM Check Python is available — prefer 'py' launcher, fall back to 'python'
+set "PYTHON="
+where py >nul 2>&1
+if !errorlevel! equ 0 (
+    set "PYTHON=py -3"
+) else (
+    where python >nul 2>&1
+    if !errorlevel! equ 0 (
+        set "PYTHON=python"
+    )
+)
+if "!PYTHON!"=="" (
+    echo ERROR: Python not found. Neither 'py' launcher nor 'python' is in PATH.
+    echo Please install Python 3 from https://www.python.org/downloads/
+    echo and check "Add Python to PATH" during installation.
     exit /b 1
 )
 
 REM Run the Python script
-python "%SCRIPT_DIR%generate_test_data.py" --outdir "%OUTDIR%"
+!PYTHON! "%SCRIPT_DIR%generate_test_data.py" --outdir "%OUTDIR%"
 if !errorlevel! neq 0 (
     echo.
     echo ERROR: Test data generation failed.
