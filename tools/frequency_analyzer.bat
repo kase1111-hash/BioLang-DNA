@@ -5,7 +5,7 @@ REM Convenience wrapper that locates a working Python 3 interpreter and
 REM calls frequency_analyzer.py.  When invoked with no arguments it runs
 REM the full "all" analysis against the default C. elegans test data.
 REM
-REM Requires: Python 3, matplotlib
+REM Requires: Python 3 + packages listed in requirements.txt
 REM
 REM Usage:
 REM   frequency_analyzer.bat                         (run all, default paths)
@@ -61,6 +61,28 @@ echo and make sure to check "Add Python to PATH" during installation.
 exit /b 1
 
 :found_python
+
+REM --- Check for required Python packages ---
+set "DEPS_OK=1"
+for %%P in (numpy scipy pandas matplotlib seaborn) do (
+    !PYTHON! -c "import %%P" >nul 2>&1
+    if !errorlevel! neq 0 (
+        set "DEPS_OK=0"
+    )
+)
+
+if "!DEPS_OK!"=="0" (
+    echo Missing required Python packages. Installing from requirements.txt ...
+    echo.
+    !PYTHON! -m pip install -r "%PROJECT_DIR%\requirements.txt"
+    if !errorlevel! neq 0 (
+        echo.
+        echo ERROR: Failed to install dependencies.
+        echo Please run manually:  !PYTHON! -m pip install -r requirements.txt
+        exit /b 1
+    )
+    echo.
+)
 
 REM --- If the user passed arguments, forward them as-is ---
 if not "%~1"=="" (
