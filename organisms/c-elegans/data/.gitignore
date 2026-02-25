@@ -1,0 +1,12 @@
+# Large genome data files — download via ../download_genome.sh
+*.fna
+*.fna.gz
+*.faa
+*.faa.gz
+*.gff3
+*.gff3.gz
+*.zip
+
+# Keep the manifest and gitignore
+!DATA_MANIFEST.md
+!.gitignore
